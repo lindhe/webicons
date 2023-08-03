@@ -1,0 +1,31 @@
+[package]
+authors = [
+  "Andreas Lindhé",
+]
+categories = [
+  "web-programming::http-server",
+]
+description = "A web app that serves emojis and other icons as favicons."
+edition = "2021"
+exclude = [
+  "/.*",
+]
+keywords = [
+  "emoji",
+  "favicon",
+  "http",
+  "icons",
+  "material-design-icons",
+  "mdi",
+  "server",
+  "web",
+]
+license = " GPL-3.0-or-later"
+name = "webicons"
+repository = "https://github.com/lindhe/webicons/"
+version = "0.1.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rocket = "=0.5.0-rc.3"

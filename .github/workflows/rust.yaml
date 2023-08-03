@@ -1,0 +1,41 @@
+---
+name: Rust lint and checks
+run-name: Checking ${{ github.sha }}
+on:  # yamllint disable-line rule:truthy
+  - push
+  - pull_request
+jobs:
+  rustfmt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out ${{ github.repository }}:${{ github.ref_name }}
+        uses: actions/checkout@v3
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          components: rustfmt
+      - run: rustfmt src/*
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out ${{ github.repository }}:${{ github.ref_name }}
+        uses: actions/checkout@v3
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          components: clippy
+      - uses: actions-rs/clippy@master
+        with:
+          args: --all-features --all-targets
+  cargo-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+      - uses: actions-rs/cargo@v1
+        with:
+          command: check
