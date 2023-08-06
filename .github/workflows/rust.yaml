@@ -14,7 +14,8 @@ jobs:
         with:
           toolchain: stable
           components: rustfmt
-      - run: rustfmt src/*
+      - run: rustfmt src/main.rs
+      - run: rustfmt src/lib.rs
   clippy:
     name: Clippy
     runs-on: ubuntu-latest
