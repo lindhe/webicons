@@ -1,4 +1,35 @@
 use emojis::Emoji;
+use html::metadata::builders::HeadBuilder;
+use html::root::builders::BodyBuilder;
+use html::root::Html;
+
+pub fn make_body<'a>(b: &'a mut BodyBuilder) -> &mut BodyBuilder {
+    let name = "<h1>OpenMoji</h1>";
+    let attribution =
+        "<p>All emojis designed by <a href=\"https://openmoji.org\">OpenMoji</a> – the open-source emoji and icon project.</p>";
+    let license =
+        "<p>License: <a href=\"https://creativecommons.org/licenses/by-sa/4.0/#\">CC BY-SA 4.0</a></p>";
+
+    b.text(name);
+    b.text(attribution);
+    b.text(license);
+    b
+}
+
+pub fn make_head<'a>(h: &'a mut HeadBuilder) -> &mut HeadBuilder {
+    h.title(|t| t.text("FOO"));
+    h.link(|l| {
+        l.rel("icon")
+            .type_("image/x-icon")
+            .href("/favicon.ico")
+            .sizes("any")
+    });
+    h
+}
+
+pub fn make_html() -> Html {
+    Html::builder().head(make_head).body(make_body).build()
+}
 
 /// Returns "😀" given "1f600".
 pub fn get_emoji_string_from_id(id: &str) -> String {
