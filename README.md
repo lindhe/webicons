@@ -7,6 +7,7 @@ I made this to more easily get a wide array of icons available for use in my Kee
 
 ```shell
 cargo check
+cargo test
 cargo build
 cargo run
 ```
