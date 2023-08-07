@@ -44,8 +44,8 @@ pub fn make_body(
 
     let h1 = format!("<h1>{name}</h1>");
     let attribution_p = format!("<p>{attribution}</p>");
-    let url_p = format!("<p><a href=\"{url}\"></a></p>");
-    let license_p = format!("<p><a href=\"{license_url}\">{license_name}</a></p>");
+    let url_p = format!("<p><a href=\"{url}\">{url}</a></p>");
+    let license_p = format!("<p>License: <a href=\"{license_url}\">{license_name}</a></p>");
 
     body.text(h1);
     body.text(url_p);
