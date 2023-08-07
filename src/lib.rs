@@ -1,7 +1,8 @@
 use emojis::Emoji;
 use html::metadata::builders::HeadBuilder;
+use html::metadata::Head;
 use html::root::builders::BodyBuilder;
-use html::root::Html;
+use html::root::{Body, Html};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -32,32 +33,37 @@ pub struct Config {
     pub icons: Icons,
 }
 
-pub fn make_body<'a>(b: &'a mut BodyBuilder) -> &mut BodyBuilder {
-    let name = "<h1>OpenMoji</h1>";
-    let attribution =
-        "<p>All emojis designed by <a href=\"https://openmoji.org\">OpenMoji</a> – the open-source emoji and icon project.</p>";
-    let license =
-        "<p>License: <a href=\"https://creativecommons.org/licenses/by-sa/4.0/#\">CC BY-SA 4.0</a></p>";
+pub fn make_body(name: &str, attribution: &str, license_name: &str, license_url: &str) -> Body {
+    let mut body: BodyBuilder = Body::builder();
 
-    b.text(name);
-    b.text(attribution);
-    b.text(license);
-    b
+    let h1 = format!("<h1>{name}</h1>");
+    let attribution_p = format!("<p>{attribution}</p>");
+    let license_p = format!("<p><a href=\"{license_url}\">{license_name}</a></p>");
+
+    body.text(h1);
+    body.text(attribution_p);
+    body.text(license_p);
+
+    body.build()
 }
 
-pub fn make_head<'a>(h: &'a mut HeadBuilder) -> &mut HeadBuilder {
-    h.title(|t| t.text("FOO"));
-    h.link(|l| {
+pub fn make_head() -> Head {
+    let mut head: HeadBuilder = Head::builder();
+    head.title(|t| t.text("FOO"));
+    head.link(|l| {
         l.rel("icon")
             .type_("image/x-icon")
             .href("/favicon.ico")
             .sizes("any")
     });
-    h
+    head.build()
 }
 
-pub fn make_html() -> Html {
-    Html::builder().head(make_head).body(make_body).build()
+pub fn make_html(name: &str, attribution: &str, license_name: &str, license_url: &str) -> Html {
+    Html::builder()
+        .push(make_head())
+        .push(make_body(name, attribution, license_name, license_url))
+        .build()
 }
 
 /// Returns "😀" given "1f600".
