@@ -2,7 +2,7 @@
   "emojis": {
     "openmoji": {
       "name": "OpenMoji",
-      "attribution": "All emojis designed by OpenMoji – the open-source emoji and icon project.\n",
+      "attribution": "All emojis designed by OpenMoji – the open-source emoji and icon project.",
       "license-name": "CC BY-SA 4.0",
       "license-url": "https://creativecommons.org/licenses/by-sa/4.0/#",
       "url": "https://openmoji.org/"
@@ -15,11 +15,13 @@
       "url": "https://github.com/googlefonts/noto-emoji/"
     }
   },
-  "mdi": {
-    "name": "Material Design Icons",
-    "attribution": "An icon set by the Pictogrammers.",
-    "license-name": "Apache 2.0",
-    "license-url": "https://www.apache.org/licenses/LICENSE-2.0",
-    "url": "https://pictogrammers.com/"
+  "icons": {
+    "mdi": {
+      "name": "Material Design Icons",
+      "attribution": "An icon set by the Pictogrammers.",
+      "license-name": "Apache 2.0",
+      "license-url": "https://www.apache.org/licenses/LICENSE-2.0",
+      "url": "https://pictogrammers.com/"
+    }
   }
 }
