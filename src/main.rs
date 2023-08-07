@@ -6,7 +6,8 @@ extern crate rocket;
 
 #[get("/emoji/<id>")]
 fn emoji(id: &str) -> String {
-    format!("TODO: Return emoji with ID {}. 🙃", id)
+    let emoji = get_emoji_string_from_id(id);
+    format!("TODO: Emoji with ID {}: {}", id, emoji)
 }
 
 #[get("/foo")]
