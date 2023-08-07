@@ -2,6 +2,35 @@ use emojis::Emoji;
 use html::metadata::builders::HeadBuilder;
 use html::root::builders::BodyBuilder;
 use html::root::Html;
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct IconsetMetadata {
+    pub name: String,
+    pub attribution: String,
+    pub license_name: String,
+    pub license_url: String,
+    pub url: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "PascalCase")]
+pub struct Emojis {
+    pub open_moji: IconsetMetadata,
+    pub noto: IconsetMetadata,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "PascalCase")]
+pub struct Icons {
+    pub material_design_icons: IconsetMetadata,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Config {
+    pub emojis: Emojis,
+    pub icons: Icons,
+}
 
 pub fn make_body<'a>(b: &'a mut BodyBuilder) -> &mut BodyBuilder {
     let name = "<h1>OpenMoji</h1>";
