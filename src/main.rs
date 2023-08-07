@@ -14,10 +14,11 @@ fn emoji(id: &str) -> String {
 fn foo() -> (ContentType, String) {
     let attribution = "All emojis designed by <a href=\"https://openmoji.org\">OpenMoji</a> – the open-source emoji and icon project.";
     let name = "OpenMoji";
+    let url = "https://openmoji.org";
     let license_name = "CC BY-SA 4.0";
     let license_url = "https://creativecommons.org/licenses/by-sa/4.0/#";
 
-    let html = make_html(name, attribution, license_name, license_url);
+    let html = make_html(name, url, attribution, license_name, license_url);
 
     (ContentType::HTML, html.to_string())
 }

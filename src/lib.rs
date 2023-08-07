@@ -33,14 +33,22 @@ pub struct Config {
     pub icons: Icons,
 }
 
-pub fn make_body(name: &str, attribution: &str, license_name: &str, license_url: &str) -> Body {
+pub fn make_body(
+    name: &str,
+    url: &str,
+    attribution: &str,
+    license_name: &str,
+    license_url: &str,
+) -> Body {
     let mut body: BodyBuilder = Body::builder();
 
     let h1 = format!("<h1>{name}</h1>");
     let attribution_p = format!("<p>{attribution}</p>");
+    let url_p = format!("<p><a href=\"{url}\"></a></p>");
     let license_p = format!("<p><a href=\"{license_url}\">{license_name}</a></p>");
 
     body.text(h1);
+    body.text(url_p);
     body.text(attribution_p);
     body.text(license_p);
 
@@ -59,10 +67,16 @@ pub fn make_head() -> Head {
     head.build()
 }
 
-pub fn make_html(name: &str, attribution: &str, license_name: &str, license_url: &str) -> Html {
+pub fn make_html(
+    name: &str,
+    url: &str,
+    attribution: &str,
+    license_name: &str,
+    license_url: &str,
+) -> Html {
     Html::builder()
         .push(make_head())
-        .push(make_body(name, attribution, license_name, license_url))
+        .push(make_body(name, url, attribution, license_name, license_url))
         .build()
 }
 
