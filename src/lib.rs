@@ -4,9 +4,11 @@ use html::metadata::Head;
 use html::root::builders::BodyBuilder;
 use html::root::{Body, Html};
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
+/// Metadata about a favicon set.
 #[derive(Serialize, Deserialize, Debug)]
-pub struct IconsetMetadata {
+pub struct FaviconSetMetadata {
     pub name: String,
     pub attribution: String,
     pub license_name: String,
@@ -14,23 +16,18 @@ pub struct IconsetMetadata {
     pub url: String,
 }
 
+/// A FaviconSet can be for example "OpenMoji", "Noto" or "MaterialDesignIcons".
 #[derive(Serialize, Deserialize, Debug)]
-#[serde(rename_all = "PascalCase")]
-pub struct Emojis {
-    pub open_moji: IconsetMetadata,
-    pub noto: IconsetMetadata,
+#[serde(untagged)]
+pub enum FaviconSet {
+    Set(HashMap<String, FaviconSetMetadata>),
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-#[serde(rename_all = "PascalCase")]
-pub struct Icons {
-    pub material_design_icons: IconsetMetadata,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Config {
-    pub emojis: Emojis,
-    pub icons: Icons,
+#[serde(rename_all = "lowercase")]
+pub struct MetadataConfig {
+    emojis: FaviconSet,
+    icons: FaviconSet,
 }
 
 pub fn make_body(
