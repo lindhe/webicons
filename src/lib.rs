@@ -8,7 +8,7 @@ use std::collections::HashMap;
 
 /// Metadata about a favicon set.
 #[derive(Serialize, Deserialize, Debug)]
-pub struct FaviconSetMetadata {
+pub struct FaviconVendorMetadata {
     pub name: String,
     pub attribution: String,
     pub license_name: String,
@@ -16,18 +16,18 @@ pub struct FaviconSetMetadata {
     pub url: String,
 }
 
-/// A FaviconSet can be for example "OpenMoji", "Noto" or "MaterialDesignIcons".
+/// A FaviconVendor can be for example "OpenMoji", "Noto" or "MaterialDesignIcons".
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(untagged)]
-pub enum FaviconSet {
-    Set(HashMap<String, FaviconSetMetadata>),
+pub enum FaviconVendor {
+    Set(HashMap<String, FaviconVendorMetadata>),
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "lowercase")]
 pub struct MetadataConfig {
-    emojis: FaviconSet,
-    icons: FaviconSet,
+    emojis: FaviconVendor,
+    icons: FaviconVendor,
 }
 
 pub fn make_body(
