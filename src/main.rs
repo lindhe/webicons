@@ -6,21 +6,21 @@ use webicons::*;
 #[macro_use]
 extern crate rocket;
 
-#[get("/emoji/<id>")]
-fn emoji(id: &str) -> String {
-    let emoji = get_emoji_string_from_id(id);
-    format!("TODO: Emoji with ID {}: {}", id, emoji)
-}
+const DEFAULT_FAMILY: &str = "emojis";
+const DEFAULT_CONFIG_FILE_PATH: &str = "./config/metadata.json"; // TODO: Get from env or argv
 
-#[get("/foo")]
-fn foo() -> (ContentType, String) {
-    let attribution = "All emojis designed by <a href=\"https://openmoji.org\">OpenMoji</a> – the open-source emoji and icon project.";
-    let name = "OpenMoji";
-    let url = "https://openmoji.org";
-    let license_name = "CC BY-SA 4.0";
-    let license_url = "https://creativecommons.org/licenses/by-sa/4.0/#";
+#[get("/<family>/<id>?<vendor>")]
+fn get_webicon(family: &str, id: &str, vendor: Option<String>) -> (ContentType, String) {
+    let default_vendor = get_default_vendor(DEFAULT_CONFIG_FILE_PATH, DEFAULT_FAMILY).to_string();
+    let vendor = vendor.unwrap_or(default_vendor);
+    let id = normalize_id(id, family);
 
-    let html = make_html(name, url, attribution, license_name, license_url);
+    // TODO: Remove these when things works with HTML.
+    let emoji = get_emoji_string_from_id(&id);
+    println!("TODO: Emoji with ID {}: {}", id, emoji);
+
+    let metadata = get_metadata(DEFAULT_CONFIG_FILE_PATH, family, &vendor);
+    let html = make_html(&metadata, &id);
 
     (ContentType::HTML, html.to_string())
 }
@@ -34,5 +34,5 @@ async fn get_favicon() -> Option<NamedFile> {
 
 #[launch]
 fn rocket() -> _ {
-    rocket::build().mount("/", routes![emoji, foo])
+    rocket::build().mount("/", routes![get_webicon, get_favicon])
 }

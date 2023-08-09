@@ -4,8 +4,60 @@ use html::metadata::Head;
 use html::root::builders::BodyBuilder;
 use html::root::{Body, Html};
 use serde::{Deserialize, Serialize};
+use serde_json;
 use std::collections::BTreeMap;
+use std::fs::File;
+use std::path::Path;
 use unic_emoji_char::is_emoji;
+
+/// Gracefully converts an emoji shortcode to the string representation of the unicode character.
+pub fn normalize_id(id: &str, family: &str) -> String {
+    if family == "emojis" && !is_emoji(str_to_char(&id)) {
+        get_id_from_shortcode(id)
+    } else {
+        String::from(id)
+    }
+}
+
+/// Opens the config file and returns config object.
+fn get_config(file_path: &str) -> MetadataConfig {
+    let config_file = match File::open(Path::new(file_path)) {
+        Err(why) => panic!("couldn't open {}: {}", file_path, why),
+        Ok(file) => file,
+    };
+    serde_json::from_reader(config_file).expect("PLEASE HANDLE ME!") // TODO: Catch panics, e.g.
+                                                                     // for missing fields.
+}
+
+/// Get the defalt value for vendor.
+pub fn get_default_vendor(file_path: &str, family: &str) -> String {
+    let config = get_config(file_path);
+    if config.contains_key(family) {
+        match config[family].keys().next_back() {
+            Some(key) => key.to_string(),
+            None => panic!["{} has no keys under [\"{}\"]!", file_path, family],
+        }
+    } else {
+        panic!["{} does not contain [\"{}\"]!", file_path, family];
+    }
+}
+
+/// Reads WebiconVendorMetadata of `family.vendor` from `file_path`.
+pub fn get_metadata(file_path: &str, family: &str, vendor: &str) -> WebiconVendorMetadata {
+    let config = get_config(file_path);
+    if config.contains_key(family) {
+        if config[family].contains_key(vendor) {
+            config[family][vendor].clone()
+        } else {
+            panic![
+                "{} does not have [\"{}\"] under [\"{}\"]!",
+                file_path, vendor, family
+            ];
+        }
+    } else {
+        panic!["{} does not contain [\"{}\"]!", file_path, family];
+    }
+}
 
 /// Metadata about a webicon vendor.
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -24,31 +76,28 @@ pub type WebiconVendor = BTreeMap<String, WebiconVendorMetadata>;
 /// MetadataConfig represents the full configuration object for all webicon vendors.
 pub type MetadataConfig = BTreeMap<String, WebiconVendor>;
 
-pub fn make_body(
-    name: &str,
-    url: &str,
-    attribution: &str,
-    license_name: &str,
-    license_url: &str,
-) -> Body {
+pub fn make_body(metadata: &WebiconVendorMetadata) -> Body {
     let mut body: BodyBuilder = Body::builder();
 
-    let h1 = format!("<h1>{name}</h1>");
-    let attribution_p = format!("<p>{attribution}</p>");
-    let url_p = format!("<p><a href=\"{url}\">{url}</a></p>");
-    let license_p = format!("<p>License: <a href=\"{license_url}\">{license_name}</a></p>");
+    let h1 = format!("<h1>{}</h1>", metadata.name);
+    let attribution = format!("<p>{}</p>", metadata.attribution);
+    let url = format!("<p><a href=\"{url}\">{url}</a></p>", url = metadata.url);
+    let license = format!(
+        "<p>License: <a href=\"{}\">{}</a></p>",
+        metadata.license_url, metadata.license_name
+    );
 
     body.text(h1);
-    body.text(url_p);
-    body.text(attribution_p);
-    body.text(license_p);
+    body.text(url);
+    body.text(attribution);
+    body.text(license);
 
     body.build()
 }
 
-pub fn make_head() -> Head {
+pub fn make_head(title: &str) -> Head {
     let mut head: HeadBuilder = Head::builder();
-    head.title(|t| t.text("FOO"));
+    head.title(|t| t.text(String::from(title)));
     head.link(|l| {
         l.rel("icon")
             .type_("image/x-icon")
@@ -58,29 +107,37 @@ pub fn make_head() -> Head {
     head.build()
 }
 
-pub fn make_html(
-    name: &str,
-    url: &str,
-    attribution: &str,
-    license_name: &str,
-    license_url: &str,
-) -> Html {
+pub fn make_html(metadata: &WebiconVendorMetadata, title: &str) -> Html {
     Html::builder()
-        .push(make_head())
-        .push(make_body(name, url, attribution, license_name, license_url))
+        .push(make_head(title))
+        .push(make_body(metadata))
         .build()
 }
 
 /// Returns "😀" given "1f600".
 pub fn get_emoji_string_from_id(id: &str) -> String {
-    let i = u32::from_str_radix(id, 16).unwrap();
-    String::from(char::from_u32(i).unwrap())
+    if is_emoji(str_to_char(id)) {
+        let i = u32::from_str_radix(id, 16).unwrap();
+        String::from(char::from_u32(i).unwrap())
+    } else {
+        panic!("{} is not an emoji.", id);
+    }
+}
+
+// Graceful getting of emoji from shortcode.
+fn get_by_shortcode(shortcode: &str) -> &Emoji {
+    let shortcodes: Vec<&str> = emojis::iter().map(|x| x.shortcodes()).flatten().collect();
+    if shortcodes.contains(&shortcode) {
+        emojis::get_by_shortcode(shortcode).unwrap()
+    } else {
+        panic!("Unable to find shortcode {}", shortcode);
+    }
 }
 
 /// Returns "1f600" given "grinning".
 pub fn get_id_from_shortcode(shortcode: &str) -> String {
-    let emoji_str: &str = emojis::get_by_shortcode(shortcode).unwrap().as_str();
-    let emoji_unicode: char = emoji_str.chars().nth(0).unwrap();
+    let emoji_str: &str = get_by_shortcode(shortcode).as_str();
+    let emoji_unicode: char = str_to_char(emoji_str);
     format!("{:x}", emoji_unicode as u32)
 }
 
