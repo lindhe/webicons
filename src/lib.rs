@@ -4,10 +4,10 @@ use html::metadata::Head;
 use html::root::builders::BodyBuilder;
 use html::root::{Body, Html};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
-/// Metadata about a favicon set.
-#[derive(Serialize, Deserialize, Debug)]
+/// Metadata about a favicon vendor.
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct FaviconVendorMetadata {
     pub name: String,
     pub attribution: String,
@@ -18,18 +18,10 @@ pub struct FaviconVendorMetadata {
 
 /// A FaviconVendor creates a certain set of emojis or icons.
 /// For more info, see https://emojipedia.org/vendors/
-#[derive(Serialize, Deserialize, Debug)]
-#[serde(untagged)]
-pub enum FaviconVendor {
-    Set(HashMap<String, FaviconVendorMetadata>),
-}
+pub type FaviconVendor = BTreeMap<String, FaviconVendorMetadata>;
 
-#[derive(Serialize, Deserialize, Debug)]
-#[serde(rename_all = "lowercase")]
-pub struct MetadataConfig {
-    emojis: FaviconVendor,
-    icons: FaviconVendor,
-}
+/// MetadataConfig represents the full configuration object for all favicon vendors.
+pub type MetadataConfig = BTreeMap<String, FaviconVendor>;
 
 pub fn make_body(
     name: &str,
