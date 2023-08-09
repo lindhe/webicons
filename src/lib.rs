@@ -6,9 +6,9 @@ use html::root::{Body, Html};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
-/// Metadata about a favicon vendor.
+/// Metadata about a webicon vendor.
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct FaviconVendorMetadata {
+pub struct WebiconVendorMetadata {
     pub name: String,
     pub attribution: String,
     pub license_name: String,
@@ -16,12 +16,12 @@ pub struct FaviconVendorMetadata {
     pub url: String,
 }
 
-/// A FaviconVendor creates a certain set of emojis or icons.
+/// A WebiconVendor creates a certain set of emojis or icons.
 /// For more info, see https://emojipedia.org/vendors/
-pub type FaviconVendor = BTreeMap<String, FaviconVendorMetadata>;
+pub type WebiconVendor = BTreeMap<String, WebiconVendorMetadata>;
 
-/// MetadataConfig represents the full configuration object for all favicon vendors.
-pub type MetadataConfig = BTreeMap<String, FaviconVendor>;
+/// MetadataConfig represents the full configuration object for all webicon vendors.
+pub type MetadataConfig = BTreeMap<String, WebiconVendor>;
 
 pub fn make_body(
     name: &str,
