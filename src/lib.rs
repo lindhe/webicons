@@ -16,7 +16,8 @@ pub struct FaviconVendorMetadata {
     pub url: String,
 }
 
-/// A FaviconVendor can be for example "OpenMoji", "Noto" or "MaterialDesignIcons".
+/// A FaviconVendor creates a certain set of emojis or icons.
+/// For more info, see https://emojipedia.org/vendors/
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(untagged)]
 pub enum FaviconVendor {
