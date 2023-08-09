@@ -1,26 +1,26 @@
 {
   "emojis": {
-    "openmoji": {
+    "OpenMoji": {
       "name": "OpenMoji",
       "attribution": "All emojis designed by OpenMoji – the open-source emoji and icon project.",
-      "license-name": "CC BY-SA 4.0",
-      "license-url": "https://creativecommons.org/licenses/by-sa/4.0/#",
+      "license_name": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/#",
       "url": "https://openmoji.org/"
     },
-    "noto": {
+    "Noto": {
       "name": "Noto Emoji",
       "attribution": "An emoji font created by Google.",
-      "license-name": "Apache 2.0",
-      "license-url": "http://www.apache.org/licenses/LICENSE-2.0",
+      "license_name": "Apache 2.0",
+      "license_url": "http://www.apache.org/licenses/LICENSE-2.0",
       "url": "https://github.com/googlefonts/noto-emoji/"
     }
   },
   "icons": {
-    "mdi": {
+    "MaterialDesignIcons": {
       "name": "Material Design Icons",
       "attribution": "An icon set by the Pictogrammers.",
-      "license-name": "Apache 2.0",
-      "license-url": "https://www.apache.org/licenses/LICENSE-2.0",
+      "license_name": "Apache 2.0",
+      "license_url": "https://www.apache.org/licenses/LICENSE-2.0",
       "url": "https://pictogrammers.com/"
     }
   }
