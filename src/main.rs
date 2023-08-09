@@ -1,4 +1,6 @@
+use rocket::fs::NamedFile;
 use rocket::http::ContentType;
+use std::path::Path;
 use webicons::*;
 
 #[macro_use]
@@ -21,6 +23,13 @@ fn foo() -> (ContentType, String) {
     let html = make_html(name, url, attribution, license_name, license_url);
 
     (ContentType::HTML, html.to_string())
+}
+
+#[get("/favicon.ico")]
+async fn get_favicon() -> Option<NamedFile> {
+    NamedFile::open(Path::new("favicons/favicon.ico"))
+        .await
+        .ok()
 }
 
 #[launch]
