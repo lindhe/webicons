@@ -1,6 +1,7 @@
 use rocket::fs::NamedFile;
 use rocket::http::ContentType;
-use std::path::Path;
+use rocket::response::Redirect;
+use std::path::{Path, PathBuf};
 use webicons::*;
 
 #[macro_use]
@@ -8,6 +9,18 @@ extern crate rocket;
 
 const DEFAULT_FAMILY: &str = "emojis";
 const DEFAULT_CONFIG_FILE_PATH: &str = "./config/metadata.json"; // TODO: Get from env or argv
+
+#[get("/emoji/<path..>")]
+fn emoji_redirect(path: PathBuf) -> Redirect {
+    let p = format!(
+        "/emojis/{}",
+        path.as_os_str()
+            .to_str()
+            .expect("TODO: Fix this mess.")
+            .to_string()
+    );
+    Redirect::to(p)
+}
 
 #[get("/<family>/<id>?<vendor>")]
 fn get_webicon(family: &str, id: &str, vendor: Option<String>) -> (ContentType, String) {
@@ -34,5 +47,5 @@ async fn get_favicon() -> Option<NamedFile> {
 
 #[launch]
 fn rocket() -> _ {
-    rocket::build().mount("/", routes![get_webicon, get_favicon])
+    rocket::build().mount("/", routes![emoji_redirect, get_webicon, get_favicon])
 }
