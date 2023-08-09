@@ -5,6 +5,7 @@ use html::root::builders::BodyBuilder;
 use html::root::{Body, Html};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
+use unic_emoji_char::is_emoji;
 
 /// Metadata about a webicon vendor.
 #[derive(Serialize, Deserialize, Debug, Clone)]
