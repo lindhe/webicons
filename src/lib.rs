@@ -3,7 +3,7 @@ use html::metadata::builders::HeadBuilder;
 use html::metadata::Head;
 use html::root::builders::BodyBuilder;
 use html::root::{Body, Html};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use serde_json;
 use std::collections::BTreeMap;
 use std::fs::File;
@@ -65,7 +65,7 @@ pub fn get_metadata(file_path: &str, family: &str, vendor: &str) -> WebiconVendo
 }
 
 /// Metadata about a webicon vendor.
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct WebiconVendorMetadata {
     pub name: String,
     pub attribution: String,
