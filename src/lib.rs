@@ -30,8 +30,7 @@ fn get_config(file_path: &str) -> MetadataConfig {
         Err(why) => panic!("couldn't open {}: {}", file_path, why),
         Ok(file) => file,
     };
-    serde_json::from_reader(config_file).expect("PLEASE HANDLE ME!") // TODO: Catch panics, e.g.
-                                                                     // for missing fields.
+    serde_json::from_reader(config_file).expect("Unable to deserialize JSON.")
 }
 
 /// Get the defalt value for vendor.
