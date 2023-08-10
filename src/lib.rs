@@ -11,6 +11,12 @@ use std::path::Path;
 use unic_emoji_char::is_emoji;
 
 /// Gracefully converts an emoji shortcode to the string representation of the unicode character.
+///
+/// # Examples
+///
+/// ```rust
+/// assert_eq!("1f600", webicons::normalize_id("grinning", "emojis"));
+/// ```
 pub fn normalize_id(id: &str, family: &str) -> String {
     if family == "emojis" && !is_emoji(str_to_char(&id)) {
         get_id_from_shortcode(id)
@@ -114,7 +120,13 @@ pub fn make_html(metadata: &WebiconVendorMetadata, title: &str) -> Html {
         .build()
 }
 
-/// Returns "😀" given "1f600".
+/// Gets a string of an emoji given its ID.
+///
+/// # Examples
+///
+/// ```rust
+/// assert_eq!("😀", webicons::get_emoji_string_from_id("1f600"));
+/// ```
 pub fn get_emoji_string_from_id(id: &str) -> String {
     if is_emoji(str_to_char(id)) {
         let i = u32::from_str_radix(id, 16).unwrap();
@@ -154,16 +166,6 @@ pub fn str_to_char(s: &str) -> char {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn test_get_emoji_string_from_id() {
-        assert_eq!("😀", get_emoji_string_from_id("1f600"));
-    }
-
-    #[test]
-    fn test_get_id_from_shortcode() {
-        assert_eq!("1f600", get_id_from_shortcode("grinning"));
-    }
 
     #[test]
     fn test_get_shortcodes() {
