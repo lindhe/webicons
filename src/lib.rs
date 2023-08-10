@@ -8,7 +8,6 @@ use serde_json;
 use std::collections::BTreeMap;
 use std::fs::File;
 use std::path::Path;
-use unic_emoji_char::is_emoji;
 
 /// Gracefully converts an emoji shortcode to the string representation of the unicode character.
 ///
@@ -18,7 +17,7 @@ use unic_emoji_char::is_emoji;
 /// assert_eq!("1f600", webicons::normalize_id("grinning", "emojis"));
 /// ```
 pub fn normalize_id(id: &str, family: &str) -> String {
-    if family == "emojis" && !is_emoji(str_to_char(&id)) {
+    if family == "emojis" && !unic_emoji_char::is_emoji(str_to_char(&id)) {
         get_id_from_shortcode(id)
     } else {
         String::from(id)
@@ -128,7 +127,7 @@ pub fn make_html(metadata: &WebiconVendorMetadata, title: &str) -> Html {
 /// assert_eq!("😀", webicons::get_emoji_string_from_id("1f600"));
 /// ```
 pub fn get_emoji_string_from_id(id: &str) -> String {
-    if is_emoji(str_to_char(id)) {
+    if unic_emoji_char::is_emoji(str_to_char(id)) {
         let i = u32::from_str_radix(id, 16).unwrap();
         String::from(char::from_u32(i).unwrap())
     } else {
