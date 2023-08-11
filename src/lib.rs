@@ -6,18 +6,50 @@ use html::root::{Body, Html};
 use serde::Deserialize;
 use serde_json;
 use std::collections::BTreeMap;
+use std::fmt;
 use std::fs::File;
 use std::path::Path;
+use std::str::FromStr;
+
+/// Represents an allowed family of webicons.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum WebiconFamily {
+    Emojis,
+    Icons,
+}
+
+impl fmt::Display for WebiconFamily {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Emojis => write!(f, "emojis"),
+            Self::Icons => write!(f, "icons"),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub struct ParseWebiconFamilyError;
+
+impl FromStr for WebiconFamily {
+    type Err = ParseWebiconFamilyError;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "emojis" => Ok(Self::Emojis),
+            "icons" => Ok(Self::Icons),
+            _ => Err(ParseWebiconFamilyError),
+        }
+    }
+}
 
 /// Gracefully converts an emoji shortcode to the string representation of the unicode character.
 ///
 /// # Examples
 ///
 /// ```rust
-/// assert_eq!("1f600", webicons::normalize_id("grinning", "emojis"));
+/// assert_eq!("1f600", webicons::normalize_id("grinning", WebiconFamily::from("emojis")));
 /// ```
-pub fn normalize_id(id: &str, family: &str) -> String {
-    if family == "emojis" && !unic_emoji_char::is_emoji(str_to_char(&id)) {
+pub fn normalize_id(id: &str, family: WebiconFamily) -> String {
+    if family == WebiconFamily::Emojis && !unic_emoji_char::is_emoji(str_to_char(&id)) {
         get_id_from_shortcode(id)
     } else {
         String::from(id)
@@ -47,7 +79,8 @@ pub fn get_default_vendor(file_path: &str, family: &str) -> String {
 }
 
 /// Reads WebiconVendorMetadata of `family.vendor` from `file_path`.
-pub fn get_metadata(file_path: &str, family: &str, vendor: &str) -> WebiconVendorMetadata {
+pub fn get_metadata(file_path: &str, family: WebiconFamily, vendor: &str) -> WebiconVendorMetadata {
+    let family = &family.to_string();
     let config = get_config(file_path);
     if config.contains_key(family) {
         if config[family].contains_key(vendor) {
@@ -164,6 +197,15 @@ pub fn str_to_char(s: &str) -> char {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_webicon_family_traits() {
+        assert_eq!("emojis", WebiconFamily::Emojis.to_string());
+        assert_eq!(
+            WebiconFamily::Emojis,
+            WebiconFamily::from_str("emojis").unwrap()
+        );
+    }
 
     #[test]
     fn test_get_shortcodes() {
