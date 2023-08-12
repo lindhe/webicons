@@ -101,19 +101,19 @@ pub fn get_metadata(file_path: &str, family: WebiconFamily, vendor: &str) -> Web
 /// Metadata about a webicon vendor.
 #[derive(Deserialize, Debug, Clone)]
 pub struct WebiconVendorMetadata {
-    pub name: String,
-    pub attribution: String,
-    pub license_name: String,
-    pub license_url: String,
-    pub url: String,
+    name: String,
+    attribution: String,
+    license_name: String,
+    license_url: String,
+    url: String,
 }
 
 /// A WebiconVendor creates a certain set of emojis or icons.
 /// For more info, see https://emojipedia.org/vendors/
-pub type WebiconVendor = BTreeMap<String, WebiconVendorMetadata>;
+type WebiconVendor = BTreeMap<String, WebiconVendorMetadata>;
 
 /// MetadataConfig represents the full configuration object for all webicon vendors.
-pub type MetadataConfig = BTreeMap<String, WebiconVendor>;
+type MetadataConfig = BTreeMap<String, WebiconVendor>;
 
 fn make_body(metadata: &WebiconVendorMetadata) -> Body {
     let mut body: BodyBuilder = Body::builder();
