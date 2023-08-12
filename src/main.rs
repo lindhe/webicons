@@ -8,7 +8,6 @@ use webicons::*;
 #[macro_use]
 extern crate rocket;
 
-const DEFAULT_FAMILY: &str = "emojis";
 const DEFAULT_CONFIG_FILE_PATH: &str = "./config/metadata.json"; // TODO: Get from env or argv
 
 #[get("/emoji/<id>?<vendor>")]
@@ -20,9 +19,9 @@ fn emoji_redirect(id: &str, vendor: Option<String>) -> Redirect {
 
 #[get("/<family>/<id>?<vendor>")]
 fn get_webicon(family: &str, id: &str, vendor: Option<String>) -> (ContentType, String) {
-    let family: WebiconFamily = WebiconFamily::from_str(family).expect("Invalid webicon family.");
-    let default_vendor = get_default_vendor(DEFAULT_CONFIG_FILE_PATH, DEFAULT_FAMILY).to_string();
+    let default_vendor = get_default_vendor(DEFAULT_CONFIG_FILE_PATH, family).to_string();
     let vendor = vendor.unwrap_or(default_vendor);
+    let family: WebiconFamily = WebiconFamily::from_str(family).expect("Invalid webicon family.");
     let id = normalize_id(id, family);
 
     // TODO: Remove these when things works with HTML.
