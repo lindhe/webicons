@@ -25,7 +25,7 @@ fn get_webicon(family: &str, id: &str, vendor: Option<String>) -> (ContentType, 
     let id = normalize_id(id, family);
 
     // TODO: Remove these when things works with HTML.
-    let emoji = get_emoji_string_from_id(&id);
+    let emoji = get_emoji_from_id(&id).as_str();
     println!("TODO: Emoji with ID {}: {}", id, emoji);
 
     let metadata = get_metadata(DEFAULT_CONFIG_FILE_PATH, family, &vendor);

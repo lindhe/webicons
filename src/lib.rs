@@ -153,20 +153,17 @@ pub fn make_html(metadata: &WebiconVendorMetadata, title: &str) -> Html {
         .build()
 }
 
-/// Gets a string of an emoji given its ID.
+/// Gets an emoji given its ID.
 ///
 /// # Examples
 ///
 /// ```rust
-/// assert_eq!("😀", webicons::get_emoji_string_from_id("1f600"));
+/// assert_eq!("😀", webicons::get_emoji_from_id("1f600").as_str());
 /// ```
-pub fn get_emoji_string_from_id(id: &str) -> String {
-    if unic_emoji_char::is_emoji(str_to_char(id)) {
-        let i = u32::from_str_radix(id, 16).unwrap();
-        String::from(char::from_u32(i).unwrap())
-    } else {
-        panic!("{} is not an emoji.", id);
-    }
+pub fn get_emoji_from_id(id: &str) -> &Emoji {
+    let i = u32::from_str_radix(id, 16).unwrap();
+    let emoji_string = String::from(char::from_u32(i).unwrap());
+    emojis::get(&emoji_string).expect(&format!("Unable to get emoji from id {}.", id))
 }
 
 /// Returns "1f600" given "grinning".
