@@ -186,11 +186,6 @@ fn get_id_from_shortcode(shortcode: &str) -> String {
     format!("{:x}", emoji_unicode as u32)
 }
 
-/// Returns vec!["grinning"] given "😀".
-pub fn get_shortcodes(e: &Emoji) -> Vec<&str> {
-    e.shortcodes().collect::<Vec<&str>>()
-}
-
 /// Converts the first character of a str ("abc") to a char ('a').
 fn str_to_char(s: &str) -> char {
     s.chars().nth(0).unwrap()
@@ -207,12 +202,6 @@ mod tests {
             WebiconFamily::Emojis,
             WebiconFamily::from_str("emojis").unwrap()
         );
-    }
-
-    #[test]
-    fn test_get_shortcodes() {
-        let emoji_grinning = emojis::get("😀").unwrap();
-        assert_eq!(vec!["grinning"], get_shortcodes(emoji_grinning));
     }
 
     #[test]
