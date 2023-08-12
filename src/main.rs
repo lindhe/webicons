@@ -24,12 +24,10 @@ fn get_webicon(family: &str, id: &str, vendor: Option<String>) -> (ContentType, 
     let family: WebiconFamily = WebiconFamily::from_str(family).expect("Invalid webicon family.");
     let id = normalize_id(id, family);
 
-    // TODO: Remove these when things works with HTML.
-    let emoji = get_emoji_from_id(&id).as_str();
-    println!("TODO: Emoji with ID {}: {}", id, emoji);
-
     let metadata = get_metadata(DEFAULT_CONFIG_FILE_PATH, family, &vendor);
-    let html = make_html(&metadata, &id);
+    let emoji = get_emoji_from_id(&id).as_str();
+    let title = format!("{} ({})", emoji, id);
+    let html = make_html(&metadata, &title);
 
     (ContentType::HTML, html.to_string())
 }
