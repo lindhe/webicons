@@ -115,7 +115,7 @@ pub type WebiconVendor = BTreeMap<String, WebiconVendorMetadata>;
 /// MetadataConfig represents the full configuration object for all webicon vendors.
 pub type MetadataConfig = BTreeMap<String, WebiconVendor>;
 
-pub fn make_body(metadata: &WebiconVendorMetadata) -> Body {
+fn make_body(metadata: &WebiconVendorMetadata) -> Body {
     let mut body: BodyBuilder = Body::builder();
 
     let h1 = format!("<h1>{}</h1>", metadata.name);
@@ -134,7 +134,7 @@ pub fn make_body(metadata: &WebiconVendorMetadata) -> Body {
     body.build()
 }
 
-pub fn make_head(title: &str) -> Head {
+fn make_head(title: &str) -> Head {
     let mut head: HeadBuilder = Head::builder();
     head.title(|t| t.text(String::from(title)));
     head.link(|l| {
