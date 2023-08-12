@@ -169,19 +169,13 @@ pub fn get_emoji_string_from_id(id: &str) -> String {
     }
 }
 
-// Graceful getting of emoji from shortcode.
-fn get_by_shortcode(shortcode: &str) -> &Emoji {
-    let shortcodes: Vec<&str> = emojis::iter().map(|x| x.shortcodes()).flatten().collect();
-    if shortcodes.contains(&shortcode) {
-        emojis::get_by_shortcode(shortcode).unwrap()
-    } else {
-        panic!("Unable to find shortcode {}", shortcode);
-    }
-}
-
 /// Returns "1f600" given "grinning".
 fn get_id_from_shortcode(shortcode: &str) -> String {
-    let emoji_str: &str = get_by_shortcode(shortcode).as_str();
+    let emoji: &Emoji = match emojis::get_by_shortcode(shortcode) {
+        Some(emoji) => emoji,
+        None => panic!("Unable to find shortcode {}", shortcode),
+    };
+    let emoji_str: &str = emoji.as_str();
     let emoji_unicode: char = str_to_char(emoji_str);
     format!("{:x}", emoji_unicode as u32)
 }
