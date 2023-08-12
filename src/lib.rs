@@ -1,8 +1,6 @@
 use emojis::Emoji;
-use html::metadata::builders::HeadBuilder;
-use html::metadata::Head;
-use html::root::builders::BodyBuilder;
-use html::root::{Body, Html};
+use html::metadata::{builders::HeadBuilder, Head};
+use html::root::{builders::BodyBuilder, Body, Html};
 use serde::Deserialize;
 use std::collections::BTreeMap;
 use std::fmt;
