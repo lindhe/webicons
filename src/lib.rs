@@ -46,7 +46,9 @@ impl FromStr for WebiconFamily {
 /// # Examples
 ///
 /// ```rust
-/// assert_eq!("1f600", webicons::normalize_id("grinning", WebiconFamily::from("emojis")));
+/// use webicons::{normalize_id, WebiconFamily};
+///
+/// assert_eq!("1f600", normalize_id("grinning", WebiconFamily::Emojis));
 /// ```
 pub fn normalize_id(id: &str, family: WebiconFamily) -> String {
     if family == WebiconFamily::Emojis && !unic_emoji_char::is_emoji(str_to_char(&id)) {
