@@ -180,7 +180,7 @@ fn get_by_shortcode(shortcode: &str) -> &Emoji {
 }
 
 /// Returns "1f600" given "grinning".
-pub fn get_id_from_shortcode(shortcode: &str) -> String {
+fn get_id_from_shortcode(shortcode: &str) -> String {
     let emoji_str: &str = get_by_shortcode(shortcode).as_str();
     let emoji_unicode: char = str_to_char(emoji_str);
     format!("{:x}", emoji_unicode as u32)
@@ -192,7 +192,7 @@ pub fn get_shortcodes(e: &Emoji) -> Vec<&str> {
 }
 
 /// Converts the first character of a str ("abc") to a char ('a').
-pub fn str_to_char(s: &str) -> char {
+fn str_to_char(s: &str) -> char {
     s.chars().nth(0).unwrap()
 }
 
