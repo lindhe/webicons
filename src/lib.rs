@@ -4,7 +4,6 @@ use html::metadata::Head;
 use html::root::builders::BodyBuilder;
 use html::root::{Body, Html};
 use serde::Deserialize;
-use serde_json;
 use std::collections::BTreeMap;
 use std::fmt;
 use std::fs::File;
