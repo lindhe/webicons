@@ -1,7 +1,5 @@
 // vim: foldmethod=marker :
 
-pub use self::metadata::WebiconFamily;
-
 pub mod metadata {
     //! Helpers for handling metadata for webicons.
     //{{{
@@ -124,9 +122,9 @@ pub mod token {
     /// # Examples
     ///
     /// ```rust
-    /// use webicons::{token, WebiconFamily};
+    /// use webicons::{token, metadata};
     ///
-    /// assert_eq!("1f600", token::normalize_id("grinning", WebiconFamily::Emojis));
+    /// assert_eq!("1f600", token::normalize_id("grinning", metadata::WebiconFamily::Emojis));
     /// ```
     pub fn normalize_id(id: &str, family: WebiconFamily) -> String {
         if family == WebiconFamily::Emojis && !unic_emoji_char::is_emoji(str_to_char(&id)) {
@@ -238,10 +236,10 @@ pub mod html {
 
 #[cfg(test)]
 mod tests {
-    //! Unit tests.
+    //! Unit tests for public traits.
     //{{{
 
-    use super::*;
+    use super::metadata::WebiconFamily;
     use std::str::FromStr;
 
     #[test]
