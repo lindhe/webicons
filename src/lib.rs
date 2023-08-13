@@ -198,6 +198,9 @@ pub fn make_html(metadata: &WebiconVendorMetadata, title: &str) -> Html {
 
 #[cfg(test)]
 mod tests {
+    //! Unit tests.
+    //{{{
+
     use super::*;
     use std::str::FromStr;
 
@@ -223,4 +226,5 @@ mod tests {
         let id = get_id_from_shortcode("grinning");
         assert_eq!("1f600", id);
     }
+    //}}}
 }
