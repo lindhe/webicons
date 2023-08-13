@@ -11,6 +11,16 @@ pub mod metadata {
     use std::path::Path;
     use std::str::FromStr;
 
+    /// Metadata about a webicon vendor.
+    #[derive(Deserialize, Debug, Clone)]
+    pub struct WebiconVendorMetadata {
+        pub(crate) name: String,
+        pub(crate) attribution: String,
+        pub(crate) license_name: String,
+        pub(crate) license_url: String,
+        pub(crate) url: String,
+    }
+
     /// Represents an allowed family of webicons.
     #[derive(Clone, Copy, Debug, PartialEq)]
     pub enum WebiconFamily {
@@ -39,16 +49,6 @@ pub mod metadata {
                 _ => Err(ParseWebiconFamilyError),
             }
         }
-    }
-
-    /// Metadata about a webicon vendor.
-    #[derive(Deserialize, Debug, Clone)]
-    pub struct WebiconVendorMetadata {
-        pub(crate) name: String,
-        pub(crate) attribution: String,
-        pub(crate) license_name: String,
-        pub(crate) license_url: String,
-        pub(crate) url: String,
     }
 
     /// A WebiconVendor creates a certain set of emojis or icons.
