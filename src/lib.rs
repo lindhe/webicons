@@ -168,7 +168,7 @@ pub fn get_emoji_from_id(id: &str) -> &Emoji {
     emojis::get(&emoji_string).expect(&format!("Unable to get emoji from id {}.", id))
 }
 
-/// Returns "1f600" given "grinning".
+/// Gets an emoji's ID given its shortcode.
 fn get_id_from_shortcode(shortcode: &str) -> String {
     let emoji: &Emoji = match emojis::get_by_shortcode(shortcode) {
         Some(emoji) => emoji,
@@ -202,5 +202,11 @@ mod tests {
         assert_eq!('a', str_to_char("a"));
         assert_eq!('😀', str_to_char("😀"));
         assert_eq!('\u{1f600}', str_to_char("\u{1f600}"));
+    }
+
+    #[test]
+    fn test_get_id_from_shortcode() {
+        let id = get_id_from_shortcode("grinning");
+        assert_eq!("1f600", id);
     }
 }
