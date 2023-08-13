@@ -1,4 +1,5 @@
-use webicons::*;
+use webicons::html::*;
+use webicons::metadata::{self, WebiconFamily};
 
 fn main() {
     let metadata =

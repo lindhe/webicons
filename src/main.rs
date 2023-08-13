@@ -27,7 +27,7 @@ fn get_webicon(family: &str, id: &str, vendor: Option<String>) -> (ContentType, 
     let metadata = metadata::get_metadata(DEFAULT_CONFIG_FILE_PATH, family, &vendor);
     let emoji = get_emoji_from_id(&id).as_str();
     let title = format!("{} ({})", emoji, id);
-    let html = make_html(&metadata, &title);
+    let html = webicons::html::make_html(&metadata, &title);
 
     (ContentType::HTML, html.to_string())
 }

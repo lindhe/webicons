@@ -1,8 +1,6 @@
 // vim: foldmethod=marker :
 pub use crate::metadata::{WebiconFamily, WebiconVendorMetadata};
 use emojis::Emoji;
-use html::metadata::{builders::HeadBuilder, Head};
-use html::root::{builders::BodyBuilder, Body, Html};
 
 pub mod metadata {
     //! Helpers for handling metadata for webicons.
@@ -158,42 +156,52 @@ fn str_to_char(s: &str) -> char {
     s.chars().nth(0).unwrap()
 }
 
-fn make_body(metadata: &WebiconVendorMetadata) -> Body {
-    let mut body: BodyBuilder = Body::builder();
+pub mod html {
+    //! Helpers for creating HTML objects.
+    //{{{
 
-    let h1 = format!("<h1>{}</h1>", metadata.name);
-    let attribution = format!("<p>{}</p>", metadata.attribution);
-    let url = format!("<p><a href=\"{url}\">{url}</a></p>", url = metadata.url);
-    let license = format!(
-        "<p>License: <a href=\"{}\">{}</a></p>",
-        metadata.license_url, metadata.license_name
-    );
+    use crate::metadata::WebiconVendorMetadata;
+    use html::metadata::{builders::HeadBuilder, Head};
+    use html::root::{builders::BodyBuilder, Body, Html};
 
-    body.text(h1);
-    body.text(url);
-    body.text(attribution);
-    body.text(license);
+    fn make_body(metadata: &WebiconVendorMetadata) -> Body {
+        let mut body: BodyBuilder = Body::builder();
 
-    body.build()
-}
+        let h1 = format!("<h1>{}</h1>", metadata.name);
+        let attribution = format!("<p>{}</p>", metadata.attribution);
+        let url = format!("<p><a href=\"{url}\">{url}</a></p>", url = metadata.url);
+        let license = format!(
+            "<p>License: <a href=\"{}\">{}</a></p>",
+            metadata.license_url, metadata.license_name
+        );
 
-fn make_head(title: &str) -> Head {
-    let mut head: HeadBuilder = Head::builder();
-    head.title(|t| t.text(String::from(title)));
-    head.link(|l| {
-        l.rel("icon")
-            .type_("image/x-icon")
-            .href("/favicon.ico")
-            .sizes("any")
-    });
-    head.build()
-}
+        body.text(h1);
+        body.text(url);
+        body.text(attribution);
+        body.text(license);
 
-pub fn make_html(metadata: &WebiconVendorMetadata, title: &str) -> Html {
-    Html::builder()
-        .push(make_head(title))
-        .push(make_body(metadata))
-        .build()
+        body.build()
+    }
+
+    fn make_head(title: &str) -> Head {
+        let mut head: HeadBuilder = Head::builder();
+        head.title(|t| t.text(String::from(title)));
+        head.link(|l| {
+            l.rel("icon")
+                .type_("image/x-icon")
+                .href("/favicon.ico")
+                .sizes("any")
+        });
+        head.build()
+    }
+
+    pub fn make_html(metadata: &WebiconVendorMetadata, title: &str) -> Html {
+        Html::builder()
+            .push(make_head(title))
+            .push(make_body(metadata))
+            .build()
+    }
+    //}}}
 }
 
 #[cfg(test)]
