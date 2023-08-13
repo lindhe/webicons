@@ -55,23 +55,6 @@ type WebiconVendor = BTreeMap<String, WebiconVendorMetadata>;
 /// MetadataConfig represents the full configuration object for all webicon vendors.
 type MetadataConfig = BTreeMap<String, WebiconVendor>;
 
-/// Gracefully converts an emoji shortcode to the string representation of the unicode character.
-///
-/// # Examples
-///
-/// ```rust
-/// use webicons::{normalize_id, WebiconFamily};
-///
-/// assert_eq!("1f600", normalize_id("grinning", WebiconFamily::Emojis));
-/// ```
-pub fn normalize_id(id: &str, family: WebiconFamily) -> String {
-    if family == WebiconFamily::Emojis && !unic_emoji_char::is_emoji(str_to_char(&id)) {
-        get_id_from_shortcode(id)
-    } else {
-        String::from(id)
-    }
-}
-
 /// Opens the config file and returns config object.
 fn get_config(file_path: &str) -> MetadataConfig {
     let config_file = match File::open(Path::new(file_path)) {
@@ -114,6 +97,23 @@ pub fn get_metadata(file_path: &str, family: WebiconFamily, vendor: &str) -> Web
         }
     } else {
         panic!["{} does not contain [\"{}\"]!", file_path, family];
+    }
+}
+
+/// Gracefully converts an emoji shortcode to the string representation of the unicode character.
+///
+/// # Examples
+///
+/// ```rust
+/// use webicons::{normalize_id, WebiconFamily};
+///
+/// assert_eq!("1f600", normalize_id("grinning", WebiconFamily::Emojis));
+/// ```
+pub fn normalize_id(id: &str, family: WebiconFamily) -> String {
+    if family == WebiconFamily::Emojis && !unic_emoji_char::is_emoji(str_to_char(&id)) {
+        get_id_from_shortcode(id)
+    } else {
+        String::from(id)
     }
 }
 
