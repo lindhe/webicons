@@ -25,8 +25,13 @@ fn get_webicon(family: &str, id: &str, vendor: Option<String>) -> (ContentType, 
     let id = token::normalize_id(id, family);
 
     let metadata = metadata::get_metadata(DEFAULT_CONFIG_FILE_PATH, family, &vendor);
-    let emoji = token::get_emoji_from_id(&id).as_str();
-    let title = format!("{} ({})", emoji, id);
+    let title = match family {
+        metadata::WebiconFamily::Emojis => {
+            let emoji = token::get_emoji_from_id(&id).as_str();
+            format!("{} ({})", emoji, id)
+        }
+        _ => format!("{}", id),
+    };
     let html = webicons::html::make_html(&metadata, &title);
 
     (ContentType::HTML, html.to_string())
