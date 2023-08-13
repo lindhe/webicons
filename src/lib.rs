@@ -200,6 +200,7 @@ mod tests {
     #[test]
     fn test_str_to_char() {
         assert_eq!('a', str_to_char("a"));
+        assert_eq!('a', str_to_char("abc"));
         assert_eq!('😀', str_to_char("😀"));
         assert_eq!('\u{1f600}', str_to_char("\u{1f600}"));
     }
