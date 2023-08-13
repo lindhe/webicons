@@ -75,8 +75,8 @@ pub mod metadata {
     /// Opens the config file and returns config object.
     fn get_config(file_path: &str) -> MetadataConfig {
         let config_file = match File::open(Path::new(file_path)) {
-            Err(why) => panic!("couldn't open {}: {}", file_path, why),
             Ok(file) => file,
+            Err(why) => panic!("couldn't open {}: {}", file_path, why),
         };
         serde_json::from_reader(config_file).expect("Unable to deserialize JSON.")
     }
