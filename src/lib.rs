@@ -117,6 +117,33 @@ pub fn get_metadata(file_path: &str, family: WebiconFamily, vendor: &str) -> Web
     }
 }
 
+/// Gets an emoji given its ID.
+///
+/// # Examples
+///
+/// ```rust
+/// assert_eq!("😀", webicons::get_emoji_from_id("1f600").as_str());
+/// ```
+pub fn get_emoji_from_id(id: &str) -> &Emoji {
+    let i = u32::from_str_radix(id, 16).unwrap();
+    let emoji_string = String::from(char::from_u32(i).unwrap());
+    emojis::get(&emoji_string).expect(&format!("Unable to get emoji from id {}.", id))
+}
+
+/// Gets an emoji's ID given its shortcode.
+fn get_id_from_shortcode(shortcode: &str) -> String {
+    let emoji: &Emoji = match emojis::get_by_shortcode(shortcode) {
+        Some(emoji) => emoji,
+        None => panic!("Unable to find shortcode {}", shortcode),
+    };
+    format!("{:x}", str_to_char(emoji.as_str()) as u32)
+}
+
+/// Converts the first character of a str ("abc") to a char ('a').
+fn str_to_char(s: &str) -> char {
+    s.chars().nth(0).unwrap()
+}
+
 fn make_body(metadata: &WebiconVendorMetadata) -> Body {
     let mut body: BodyBuilder = Body::builder();
 
@@ -153,33 +180,6 @@ pub fn make_html(metadata: &WebiconVendorMetadata, title: &str) -> Html {
         .push(make_head(title))
         .push(make_body(metadata))
         .build()
-}
-
-/// Gets an emoji given its ID.
-///
-/// # Examples
-///
-/// ```rust
-/// assert_eq!("😀", webicons::get_emoji_from_id("1f600").as_str());
-/// ```
-pub fn get_emoji_from_id(id: &str) -> &Emoji {
-    let i = u32::from_str_radix(id, 16).unwrap();
-    let emoji_string = String::from(char::from_u32(i).unwrap());
-    emojis::get(&emoji_string).expect(&format!("Unable to get emoji from id {}.", id))
-}
-
-/// Gets an emoji's ID given its shortcode.
-fn get_id_from_shortcode(shortcode: &str) -> String {
-    let emoji: &Emoji = match emojis::get_by_shortcode(shortcode) {
-        Some(emoji) => emoji,
-        None => panic!("Unable to find shortcode {}", shortcode),
-    };
-    format!("{:x}", str_to_char(emoji.as_str()) as u32)
-}
-
-/// Converts the first character of a str ("abc") to a char ('a').
-fn str_to_char(s: &str) -> char {
-    s.chars().nth(0).unwrap()
 }
 
 #[cfg(test)]
