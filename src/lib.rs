@@ -21,6 +21,17 @@ pub mod metadata {
         pub(crate) url: String,
     }
 
+    // WebiconVendor {{{
+
+    /// A WebiconVendor creates a certain set of emojis or icons.
+    ///
+    /// For more info, see <https://emojipedia.org/vendors/>
+    type WebiconVendor = BTreeMap<String, WebiconVendorMetadata>;
+
+    //}}}
+
+    // WebiconFamily {{{
+
     /// Represents an allowed family of webicons.
     #[derive(Clone, Copy, Debug, PartialEq)]
     pub enum WebiconFamily {
@@ -37,6 +48,7 @@ pub mod metadata {
         }
     }
 
+    /// The error for bad (de)serialization of WebiconFamily.
     #[derive(Debug, PartialEq, Eq)]
     pub struct ParseWebiconFamilyError;
 
@@ -51,12 +63,14 @@ pub mod metadata {
         }
     }
 
-    /// A WebiconVendor creates a certain set of emojis or icons.
-    /// For more info, see https://emojipedia.org/vendors/
-    type WebiconVendor = BTreeMap<String, WebiconVendorMetadata>;
+    //}}}
+
+    // MetadataConfig {{{
 
     /// MetadataConfig represents the full configuration object for all webicon vendors.
     type MetadataConfig = BTreeMap<String, WebiconVendor>;
+
+    //}}}
 
     /// Opens the config file and returns config object.
     fn get_config(file_path: &str) -> MetadataConfig {
@@ -107,6 +121,7 @@ pub mod metadata {
             panic!["{} does not contain [\"{}\"]!", file_path, family];
         }
     }
+
     //}}}
 }
 
