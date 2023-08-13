@@ -38,6 +38,23 @@ impl FromStr for WebiconFamily {
     }
 }
 
+/// Metadata about a webicon vendor.
+#[derive(Deserialize, Debug, Clone)]
+pub struct WebiconVendorMetadata {
+    name: String,
+    attribution: String,
+    license_name: String,
+    license_url: String,
+    url: String,
+}
+
+/// A WebiconVendor creates a certain set of emojis or icons.
+/// For more info, see https://emojipedia.org/vendors/
+type WebiconVendor = BTreeMap<String, WebiconVendorMetadata>;
+
+/// MetadataConfig represents the full configuration object for all webicon vendors.
+type MetadataConfig = BTreeMap<String, WebiconVendor>;
+
 /// Gracefully converts an emoji shortcode to the string representation of the unicode character.
 ///
 /// # Examples
@@ -99,23 +116,6 @@ pub fn get_metadata(file_path: &str, family: WebiconFamily, vendor: &str) -> Web
         panic!["{} does not contain [\"{}\"]!", file_path, family];
     }
 }
-
-/// Metadata about a webicon vendor.
-#[derive(Deserialize, Debug, Clone)]
-pub struct WebiconVendorMetadata {
-    name: String,
-    attribution: String,
-    license_name: String,
-    license_url: String,
-    url: String,
-}
-
-/// A WebiconVendor creates a certain set of emojis or icons.
-/// For more info, see https://emojipedia.org/vendors/
-type WebiconVendor = BTreeMap<String, WebiconVendorMetadata>;
-
-/// MetadataConfig represents the full configuration object for all webicon vendors.
-type MetadataConfig = BTreeMap<String, WebiconVendor>;
 
 fn make_body(metadata: &WebiconVendorMetadata) -> Body {
     let mut body: BodyBuilder = Body::builder();
