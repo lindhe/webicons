@@ -1,6 +1,6 @@
 // vim: foldmethod=marker :
-pub use crate::metadata::{WebiconFamily, WebiconVendorMetadata};
-use emojis::Emoji;
+
+pub use self::metadata::WebiconFamily;
 
 pub mod metadata {
     //! Helpers for handling metadata for webicons.
@@ -112,48 +112,80 @@ pub mod metadata {
     //}}}
 }
 
-/// Gracefully converts an emoji shortcode to the string representation of the unicode character.
-///
-/// # Examples
-///
-/// ```rust
-/// use webicons::{normalize_id, WebiconFamily};
-///
-/// assert_eq!("1f600", normalize_id("grinning", WebiconFamily::Emojis));
-/// ```
-pub fn normalize_id(id: &str, family: WebiconFamily) -> String {
-    if family == WebiconFamily::Emojis && !unic_emoji_char::is_emoji(str_to_char(&id)) {
-        get_id_from_shortcode(id)
-    } else {
-        String::from(id)
+pub mod token {
+    //! Helpers for handling misc webicon representations (strings, IDs, etc).
+    //{{{
+
+    use crate::metadata::WebiconFamily;
+    use emojis::Emoji;
+
+    /// Gracefully converts an emoji shortcode to the string representation of the unicode character.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use webicons::{token, WebiconFamily};
+    ///
+    /// assert_eq!("1f600", token::normalize_id("grinning", WebiconFamily::Emojis));
+    /// ```
+    pub fn normalize_id(id: &str, family: WebiconFamily) -> String {
+        if family == WebiconFamily::Emojis && !unic_emoji_char::is_emoji(str_to_char(&id)) {
+            get_id_from_shortcode(id)
+        } else {
+            String::from(id)
+        }
     }
-}
 
-/// Gets an emoji given its ID.
-///
-/// # Examples
-///
-/// ```rust
-/// assert_eq!("😀", webicons::get_emoji_from_id("1f600").as_str());
-/// ```
-pub fn get_emoji_from_id(id: &str) -> &Emoji {
-    let i = u32::from_str_radix(id, 16).unwrap();
-    let emoji_string = String::from(char::from_u32(i).unwrap());
-    emojis::get(&emoji_string).expect(&format!("Unable to get emoji from id {}.", id))
-}
+    /// Gets an emoji given its ID.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// assert_eq!("😀", webicons::token::get_emoji_from_id("1f600").as_str());
+    /// ```
+    pub fn get_emoji_from_id(id: &str) -> &Emoji {
+        let i = u32::from_str_radix(id, 16).unwrap();
+        let emoji_string = String::from(char::from_u32(i).unwrap());
+        emojis::get(&emoji_string).expect(&format!("Unable to get emoji from id {}.", id))
+    }
 
-/// Gets an emoji's ID given its shortcode.
-fn get_id_from_shortcode(shortcode: &str) -> String {
-    let emoji: &Emoji = match emojis::get_by_shortcode(shortcode) {
-        Some(emoji) => emoji,
-        None => panic!("Unable to find shortcode {}", shortcode),
-    };
-    format!("{:x}", str_to_char(emoji.as_str()) as u32)
-}
+    /// Gets an emoji's ID given its shortcode.
+    fn get_id_from_shortcode(shortcode: &str) -> String {
+        let emoji: &Emoji = match emojis::get_by_shortcode(shortcode) {
+            Some(emoji) => emoji,
+            None => panic!("Unable to find shortcode {}", shortcode),
+        };
+        format!("{:x}", str_to_char(emoji.as_str()) as u32)
+    }
 
-/// Converts the first character of a str ("abc") to a char ('a').
-fn str_to_char(s: &str) -> char {
-    s.chars().nth(0).unwrap()
+    /// Converts the first character of a str ("abc") to a char ('a').
+    fn str_to_char(s: &str) -> char {
+        s.chars().nth(0).unwrap()
+    }
+
+    #[cfg(test)]
+    mod tests {
+        //! Unit tests for private parts of token module.
+        //{{{
+
+        use super::*;
+
+        #[test]
+        fn test_str_to_char() {
+            assert_eq!('a', str_to_char("a"));
+            assert_eq!('a', str_to_char("abc"));
+            assert_eq!('😀', str_to_char("😀"));
+            assert_eq!('\u{1f600}', str_to_char("\u{1f600}"));
+        }
+
+        #[test]
+        fn test_get_id_from_shortcode() {
+            let id = get_id_from_shortcode("grinning");
+            assert_eq!("1f600", id);
+        }
+        //}}}
+    }
+    //}}}
 }
 
 pub mod html {
@@ -221,18 +253,5 @@ mod tests {
         );
     }
 
-    #[test]
-    fn test_str_to_char() {
-        assert_eq!('a', str_to_char("a"));
-        assert_eq!('a', str_to_char("abc"));
-        assert_eq!('😀', str_to_char("😀"));
-        assert_eq!('\u{1f600}', str_to_char("\u{1f600}"));
-    }
-
-    #[test]
-    fn test_get_id_from_shortcode() {
-        let id = get_id_from_shortcode("grinning");
-        assert_eq!("1f600", id);
-    }
     //}}}
 }
