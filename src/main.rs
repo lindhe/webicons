@@ -11,17 +11,17 @@ extern crate rocket;
 const DEFAULT_CONFIG_FILE_PATH: &str = "./config/metadata.json"; // TODO: Get from env or argv
 
 #[get("/emoji/<id>?<vendor>")]
-fn emoji_redirect(id: &str, vendor: Option<String>) -> Redirect {
+fn emoji_redirect(id: &str, vendor: Option<&str>) -> Redirect {
     // TODO: Update the call to get_webicon() to use WebiconFamily::Emojis instead of "emojis" as
     // soon as this bug is resolved: https://github.com/SergioBenitez/Rocket/issues/2595
     Redirect::to(uri!(get_webicon("emojis", id, vendor)))
 }
 
 #[get("/<family>/<id>?<vendor>")]
-fn get_webicon(family: &str, id: &str, vendor: Option<String>) -> (ContentType, String) {
+fn get_webicon(family: &str, id: &str, vendor: Option<&str>) -> (ContentType, String) {
     let default_vendor = metadata::get_default_vendor(DEFAULT_CONFIG_FILE_PATH, family).to_string();
-    let vendor = vendor.unwrap_or(default_vendor);
-    let family = metadata::WebiconFamily::from_str(family).expect("Invalid webicon family.");
+    let vendor = &vendor.unwrap_or(&default_vendor);
+    let family = &metadata::WebiconFamily::from_str(family).expect("Invalid webicon family.");
     let id = token::normalize_id(id, family);
 
     let metadata = metadata::get_metadata(DEFAULT_CONFIG_FILE_PATH, family, &vendor);

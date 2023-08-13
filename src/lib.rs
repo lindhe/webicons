@@ -103,7 +103,7 @@ pub mod metadata {
     /// Reads WebiconVendorMetadata of `family.vendor` from `file_path`.
     pub fn get_metadata(
         file_path: &str,
-        family: WebiconFamily,
+        family: &WebiconFamily,
         vendor: &str,
     ) -> WebiconVendorMetadata {
         let family = &family.to_string();
@@ -139,10 +139,10 @@ pub mod token {
     /// ```rust
     /// use webicons::{token, metadata};
     ///
-    /// assert_eq!("1f600", token::normalize_id("grinning", metadata::WebiconFamily::Emojis));
+    /// assert_eq!("1f600", token::normalize_id("grinning", &metadata::WebiconFamily::Emojis));
     /// ```
-    pub fn normalize_id(id: &str, family: WebiconFamily) -> String {
-        if family == WebiconFamily::Emojis && !unic_emoji_char::is_emoji(str_to_char(&id)) {
+    pub fn normalize_id(id: &str, family: &WebiconFamily) -> String {
+        if family == &WebiconFamily::Emojis && !unic_emoji_char::is_emoji(str_to_char(&id)) {
             get_id_from_shortcode(id)
         } else {
             String::from(id)
