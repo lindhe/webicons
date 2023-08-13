@@ -1,103 +1,117 @@
+// vim: foldmethod=marker :
+pub use crate::metadata::{WebiconFamily, WebiconVendorMetadata};
 use emojis::Emoji;
 use html::metadata::{builders::HeadBuilder, Head};
 use html::root::{builders::BodyBuilder, Body, Html};
-use serde::Deserialize;
-use std::collections::BTreeMap;
-use std::fmt;
-use std::fs::File;
-use std::path::Path;
-use std::str::FromStr;
 
-/// Represents an allowed family of webicons.
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub enum WebiconFamily {
-    Emojis,
-    Icons,
-}
+pub mod metadata {
+    //! Helpers for handling metadata for webicons.
+    //{{{
 
-impl fmt::Display for WebiconFamily {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::Emojis => write!(f, "emojis"),
-            Self::Icons => write!(f, "icons"),
+    use serde::Deserialize;
+    use std::collections::BTreeMap;
+    use std::fmt;
+    use std::fs::File;
+    use std::path::Path;
+    use std::str::FromStr;
+
+    /// Represents an allowed family of webicons.
+    #[derive(Clone, Copy, Debug, PartialEq)]
+    pub enum WebiconFamily {
+        Emojis,
+        Icons,
+    }
+
+    impl fmt::Display for WebiconFamily {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            match self {
+                Self::Emojis => write!(f, "emojis"),
+                Self::Icons => write!(f, "icons"),
+            }
         }
     }
-}
 
-#[derive(Debug, PartialEq, Eq)]
-pub struct ParseWebiconFamilyError;
+    #[derive(Debug, PartialEq, Eq)]
+    pub struct ParseWebiconFamilyError;
 
-impl FromStr for WebiconFamily {
-    type Err = ParseWebiconFamilyError;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "emojis" => Ok(Self::Emojis),
-            "icons" => Ok(Self::Icons),
-            _ => Err(ParseWebiconFamilyError),
+    impl FromStr for WebiconFamily {
+        type Err = ParseWebiconFamilyError;
+        fn from_str(s: &str) -> Result<Self, Self::Err> {
+            match s {
+                "emojis" => Ok(Self::Emojis),
+                "icons" => Ok(Self::Icons),
+                _ => Err(ParseWebiconFamilyError),
+            }
         }
     }
-}
 
-/// Metadata about a webicon vendor.
-#[derive(Deserialize, Debug, Clone)]
-pub struct WebiconVendorMetadata {
-    name: String,
-    attribution: String,
-    license_name: String,
-    license_url: String,
-    url: String,
-}
-
-/// A WebiconVendor creates a certain set of emojis or icons.
-/// For more info, see https://emojipedia.org/vendors/
-type WebiconVendor = BTreeMap<String, WebiconVendorMetadata>;
-
-/// MetadataConfig represents the full configuration object for all webicon vendors.
-type MetadataConfig = BTreeMap<String, WebiconVendor>;
-
-/// Opens the config file and returns config object.
-fn get_config(file_path: &str) -> MetadataConfig {
-    let config_file = match File::open(Path::new(file_path)) {
-        Err(why) => panic!("couldn't open {}: {}", file_path, why),
-        Ok(file) => file,
-    };
-    serde_json::from_reader(config_file).expect("Unable to deserialize JSON.")
-}
-
-/// Get the default value for vendor.
-///
-/// ```rust
-/// let default_vendor = webicons::get_default_vendor("./config/metadata.json", "emojis");
-/// assert_eq!("OpenMoji", default_vendor);
-/// ```
-pub fn get_default_vendor(file_path: &str, family: &str) -> String {
-    let config = get_config(file_path);
-    if config.contains_key(family) {
-        match config[family].keys().next_back() {
-            Some(key) => key.to_string(),
-            None => panic!["{} has no keys under [\"{}\"]!", file_path, family],
-        }
-    } else {
-        panic!["{} does not contain [\"{}\"]!", file_path, family];
+    /// Metadata about a webicon vendor.
+    #[derive(Deserialize, Debug, Clone)]
+    pub struct WebiconVendorMetadata {
+        pub(crate) name: String,
+        pub(crate) attribution: String,
+        pub(crate) license_name: String,
+        pub(crate) license_url: String,
+        pub(crate) url: String,
     }
-}
 
-/// Reads WebiconVendorMetadata of `family.vendor` from `file_path`.
-pub fn get_metadata(file_path: &str, family: WebiconFamily, vendor: &str) -> WebiconVendorMetadata {
-    let family = &family.to_string();
-    let config = get_config(file_path);
-    if config.contains_key(family) {
-        if config[family].contains_key(vendor) {
-            config[family][vendor].clone()
+    /// A WebiconVendor creates a certain set of emojis or icons.
+    /// For more info, see https://emojipedia.org/vendors/
+    type WebiconVendor = BTreeMap<String, WebiconVendorMetadata>;
+
+    /// MetadataConfig represents the full configuration object for all webicon vendors.
+    type MetadataConfig = BTreeMap<String, WebiconVendor>;
+
+    /// Opens the config file and returns config object.
+    fn get_config(file_path: &str) -> MetadataConfig {
+        let config_file = match File::open(Path::new(file_path)) {
+            Err(why) => panic!("couldn't open {}: {}", file_path, why),
+            Ok(file) => file,
+        };
+        serde_json::from_reader(config_file).expect("Unable to deserialize JSON.")
+    }
+
+    /// Get the default value for vendor.
+    ///
+    /// ```rust
+    /// use webicons::metadata::get_default_vendor;
+    /// let default_vendor = get_default_vendor("./config/metadata.json", "emojis");
+    /// assert_eq!("OpenMoji", default_vendor);
+    /// ```
+    pub fn get_default_vendor(file_path: &str, family: &str) -> String {
+        let config = get_config(file_path);
+        if config.contains_key(family) {
+            match config[family].keys().next_back() {
+                Some(key) => key.to_string(),
+                None => panic!["{} has no keys under [\"{}\"]!", file_path, family],
+            }
         } else {
-            panic![
-                "{} does not have [\"{}\"] under [\"{}\"]!",
-                file_path, vendor, family
-            ];
+            panic!["{} does not contain [\"{}\"]!", file_path, family];
         }
-    } else {
-        panic!["{} does not contain [\"{}\"]!", file_path, family];
     }
+
+    /// Reads WebiconVendorMetadata of `family.vendor` from `file_path`.
+    pub fn get_metadata(
+        file_path: &str,
+        family: WebiconFamily,
+        vendor: &str,
+    ) -> WebiconVendorMetadata {
+        let family = &family.to_string();
+        let config = get_config(file_path);
+        if config.contains_key(family) {
+            if config[family].contains_key(vendor) {
+                config[family][vendor].clone()
+            } else {
+                panic![
+                    "{} does not have [\"{}\"] under [\"{}\"]!",
+                    file_path, vendor, family
+                ];
+            }
+        } else {
+            panic!["{} does not contain [\"{}\"]!", file_path, family];
+        }
+    }
+    //}}}
 }
 
 /// Gracefully converts an emoji shortcode to the string representation of the unicode character.
@@ -185,6 +199,7 @@ pub fn make_html(metadata: &WebiconVendorMetadata, title: &str) -> Html {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::str::FromStr;
 
     #[test]
     fn test_webicon_family_traits() {

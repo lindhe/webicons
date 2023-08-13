@@ -19,12 +19,12 @@ fn emoji_redirect(id: &str, vendor: Option<String>) -> Redirect {
 
 #[get("/<family>/<id>?<vendor>")]
 fn get_webicon(family: &str, id: &str, vendor: Option<String>) -> (ContentType, String) {
-    let default_vendor = get_default_vendor(DEFAULT_CONFIG_FILE_PATH, family).to_string();
+    let default_vendor = metadata::get_default_vendor(DEFAULT_CONFIG_FILE_PATH, family).to_string();
     let vendor = vendor.unwrap_or(default_vendor);
-    let family: WebiconFamily = WebiconFamily::from_str(family).expect("Invalid webicon family.");
+    let family = metadata::WebiconFamily::from_str(family).expect("Invalid webicon family.");
     let id = normalize_id(id, family);
 
-    let metadata = get_metadata(DEFAULT_CONFIG_FILE_PATH, family, &vendor);
+    let metadata = metadata::get_metadata(DEFAULT_CONFIG_FILE_PATH, family, &vendor);
     let emoji = get_emoji_from_id(&id).as_str();
     let title = format!("{} ({})", emoji, id);
     let html = make_html(&metadata, &title);
