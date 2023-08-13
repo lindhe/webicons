@@ -174,9 +174,7 @@ fn get_id_from_shortcode(shortcode: &str) -> String {
         Some(emoji) => emoji,
         None => panic!("Unable to find shortcode {}", shortcode),
     };
-    let emoji_str: &str = emoji.as_str();
-    let emoji_unicode: char = str_to_char(emoji_str);
-    format!("{:x}", emoji_unicode as u32)
+    format!("{:x}", str_to_char(emoji.as_str()) as u32)
 }
 
 /// Converts the first character of a str ("abc") to a char ('a').
