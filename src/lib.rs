@@ -64,7 +64,12 @@ fn get_config(file_path: &str) -> MetadataConfig {
     serde_json::from_reader(config_file).expect("Unable to deserialize JSON.")
 }
 
-/// Get the defalt value for vendor.
+/// Get the default value for vendor.
+///
+/// ```rust
+/// let default_vendor = webicons::get_default_vendor("./config/metadata.json", "emojis");
+/// assert_eq!("OpenMoji", default_vendor);
+/// ```
 pub fn get_default_vendor(file_path: &str, family: &str) -> String {
     let config = get_config(file_path);
     if config.contains_key(family) {
